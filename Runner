@@ -1,0 +1,135 @@
+#include <iostream>
+using namespace std;
+
+char board[6][7];
+
+// resets the board by placing an underscore ("_") for all elements in board
+void reset(char board[6][7]){
+	for (int r=0; r<6; r++){
+		for (int c=0; c<7; c++){
+			board[r][c] = '_';
+		}
+	}
+}
+
+// displays the board with numbers from 1-7 labeling the columns 
+void display(char board[6][7]){
+	for (int i=1; i<=7; i++){
+		cout << i << " ";
+	}
+}
+
+// drops the character c into the column col of board
+// character c will be on the most bottom available spot
+void drop(char board[6][7], char c, int col){
+	int i = 5;
+	bool done;
+	
+	if (board[i][col-1] == '_'){
+		board[i][col-1] = c;
+		done = false;
+	} else{
+		done = true;
+	}
+
+	while (done == true && board[i][col-1] != '_'){
+		i--;
+		if (board[i][col-1] != '_'){
+			done = true;
+		}
+		if (board[i][col-1] == '_'){
+			board[i][col-1] = c;
+			done = false;
+		}
+	}
+}
+
+// return true if there are 4 in a row horizontally, vertically, or diagonally of the same character
+bool checkForWinner(char board[6][7]){
+	// Horizontal
+	for (int r=0; r<6; r++){
+		for (int c=0; c<4; c++){
+			if (board[r][c] == 'X' && board[r][c+1] == 'X' && board[r][c+2] == 'X' && board[r][c+3] == 'X' || board[r][c] == 'O' && board[r][c+1] == 'O' && board[r][c+2] == 'O' && board[r][c+3] == 'O'){
+				return true;
+			}
+		}
+	}
+	// Vertical
+	for (int r=0; r<4; r++){
+		for (int c=0; c<7; c++){
+			if (board[r][c] == 'X' && board[r+1][c] == 'X' && board[r+2][c] == 'X' && board[r+3][c] == 'X' || board[r][c] == 'O' && board[r+1][c] == 'O' && board[r+2][c] == 'O' && board[r+3][c] == 'O'){
+				return true;
+			}
+		}
+	}
+	// Diagonal (TLeft to BRight)
+	for (int r=0; r<3; r++){
+		for (int c=0; c<4; c++){
+			if (board[r][c] == 'X' && board[r+1][c+1] == 'X' && board[r+2][c+2] == 'X' && board[r+3][c+3] == 'X' || board[r][c] == 'O' && board[r+1][c+1] == 'O' && board[r+2][c+2] == 'O' && board[r+3][c+3] == 'O'){
+				return true;
+			}
+		}
+	}
+	// Diagonal (BLeft to TRight)
+	for (int r=3; r<6; r++){
+		for (int c=0; c<4; c++){
+			if (board[r][c] == 'X' && board[r-1][c+1] == 'X' && board[r-2][c+2] == 'X' && board[r-3][c+3] == 'X' || board[r][c] == 'O' && board[r-1][c+1] == 'O' && board[r-2][c+2] == 'O' && board[r-3][c+3] == 'O'){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+int main(){
+	int col;
+	int counter = 0;
+	char player;
+	
+	bool gameover = true;
+	reset(board);
+	
+	while(gameover == true){
+		system("cls");
+		display(board);
+		cout <<endl;
+		counter++;
+	
+		for (int r=0; r<6; r++){
+			for (int c=0; c<7; c++){
+				cout << board[r][c] << " ";
+			}
+			cout <<endl;
+		}
+		cout << "\n";
+	
+		cout << "Pick a column: ";
+		cin >> col;
+		
+		if (counter % 2 == 1){
+			player = 'X';
+		} else{
+			player = 'O';
+		}
+
+		drop(board, player, col);
+		
+		if (checkForWinner(board) == true){
+			system("cls");
+			display(board);
+			cout <<endl;
+	
+			for (int r=0; r<6; r++){
+				for (int c=0; c<7; c++){
+					cout << board[r][c] << " ";
+				}
+				cout <<endl;
+			}
+			
+			cout << player << " Wins!";
+			gameover = false;
+		} else if (checkForWinner(board) == false){
+			gameover = true;
+		}
+	}
+}
